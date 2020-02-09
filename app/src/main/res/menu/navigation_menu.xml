@@ -22,7 +22,7 @@
                     android:title="21" />
                 <item
                     android:icon="@android:drawable/btn_radio"
-                    android:title="12" />
+                    android:title="22" />
             </menu>
         </item>
     </group>

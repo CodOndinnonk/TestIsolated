@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import com.ondinnonk.testisolated.extensions.openFragment
-import com.ondinnonk.testisolated.list.ListFragment
+import com.ondinnonk.testisolated.list.FilmsListFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        openFragment(ListFragment())
+        openFragment(FilmsListFragment())
     }
 
     private fun setupNavigationMenu() {

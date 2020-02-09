@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="list_item_ing_size">50dp</dimen>
+    <dimen name="list_item_padding">6dp</dimen>
+    <dimen name="list_item_divide_spacing">6dp</dimen>
+    <dimen name="screen_content_padding">6dp</dimen>
+</resources>
