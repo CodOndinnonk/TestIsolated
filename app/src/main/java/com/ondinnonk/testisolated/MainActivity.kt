@@ -27,16 +27,18 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigationMenu() {
         setSupportActionBar(main_toolbar)
 
-        val toggle = ActionBarDrawerToggle(
-            this,
-            main_drawer_layout,
-            main_toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        main_drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
+        //if use horizontal layout don't have drawer
+        main_drawer_layout?.let {
+            val toggle = ActionBarDrawerToggle(
+                this,
+                it,
+                main_toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+            )
+            it.addDrawerListener(toggle)
+            toggle.syncState()
+        }
     }
-
 
 }
