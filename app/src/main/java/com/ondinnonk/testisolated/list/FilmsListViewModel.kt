@@ -2,25 +2,38 @@ package com.ondinnonk.testisolated.list
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.util.*
+import androidx.lifecycle.viewModelScope
+import com.ondinnonk.testisolated.Config
+import com.ondinnonk.testisolated.utils.NetLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FilmsListViewModel : ViewModel() {
 
-    var filmsList: MutableLiveData<ArrayList<Film>> = MutableLiveData(
-        arrayListOf(
-            Film(0, "0", "", "000", 1457018867393),
-            Film(1, "1", "", "111", 1457018867344),
-            Film(2, "2", "", "222", 1457018867553),
-            Film(3, "3", "", "333", 1457012224546),
-            Film(4, "4", "", "444", 1457018861212),
-            Film(5, "5", "", "555", 1457018867421)
-        )
-    )
+    var filmsList: MutableLiveData<List<Film>> = MutableLiveData()
+
 
     val filmsListAdapter: MutableLiveData<FilmsListAdapter> =
         MutableLiveData(FilmsListAdapter(this::onFilmSelect))
 
+    init {
+        fetchFilms()
+    }
+
+    fun fetchFilms() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                NetLoader().getJSON(Config.SOURCE_URL)?.let {
+                    filmsList.postValue(Film.create(it))
+                }
+            }
+        }
+    }
+
     private fun onFilmSelect(film: Film) {
 
     }
+
+
 }
