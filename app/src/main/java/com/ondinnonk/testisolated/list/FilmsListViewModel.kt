@@ -10,9 +10,12 @@ import kotlinx.coroutines.withContext
 
 class FilmsListViewModel : ViewModel() {
 
-    private var _filmsList: MutableLiveData<List<Film>> = MutableLiveData()
-    val filmsList = _filmsList
     private val repository: NetRepository by lazy { NetRepository() }
+
+    private var originFilmList = arrayListOf<Film>()
+    private var _adapterFilmsList: MutableLiveData<List<Film>> = MutableLiveData()
+    val adapterFilmsList = _adapterFilmsList
+    val actionOnApplyFilter = MutableLiveData<Unit>()
 
 
     val filmsListAdapter: MutableLiveData<FilmsListAdapter> =
@@ -26,10 +29,23 @@ class FilmsListViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.getJSON(Config.SOURCE_URL)?.let {
-                    _filmsList.postValue(Film.create(it))
+                    originFilmList.clear()
+                    originFilmList.addAll(Film.create(it))
+                    _adapterFilmsList.postValue(originFilmList)
                 }
             }
         }
+    }
+
+    fun applyFilter(searchName: String) {
+        val out = arrayListOf<Film>()
+        originFilmList.forEach {
+            if (it.name.contains(searchName, true)) {
+                out.add(it)
+            }
+        }
+        _adapterFilmsList.postValue(out)
+        actionOnApplyFilter.postValue(Unit)
     }
 
     private fun onFilmSelect(film: Film) {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -28,7 +29,24 @@ class FilmsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        films_list_search_cancel.visibility = View.GONE
         initObservers()
+        initListeners()
+    }
+
+    private fun initListeners() {
+        films_list_search_btn.setOnClickListener {
+            if (films_list_search_input.text.isBlank().not()) {
+                viewModel.applyFilter(films_list_search_input.text.toString())
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.empty_search_warning_text),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+        films_list_search_cancel.setOnClickListener { cancelFilters() }
     }
 
     private fun initObservers() = with(viewModel) {
@@ -37,6 +55,16 @@ class FilmsListFragment : Fragment() {
             films_list_recycler.adapter = it
             films_list_recycler.invalidate()
         })
-        filmsList.observe(viewLifecycleOwner, Observer { filmsListAdapter.value?.setFilms(it) })
+        adapterFilmsList.observe(viewLifecycleOwner, Observer { filmsListAdapter.value?.setFilms(it) })
+        actionOnApplyFilter.observe(
+            viewLifecycleOwner,
+            Observer { films_list_search_cancel.visibility = View.VISIBLE })
+    }
+
+    private fun cancelFilters() {
+        films_list_search_cancel.visibility = View.GONE
+        viewModel.fetchFilms()
+        films_list_search_input.clearFocus()
+        films_list_search_input.setText("")
     }
 }

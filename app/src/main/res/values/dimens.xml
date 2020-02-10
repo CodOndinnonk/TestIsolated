@@ -4,4 +4,5 @@
     <dimen name="list_item_padding">6dp</dimen>
     <dimen name="list_item_divide_spacing">6dp</dimen>
     <dimen name="screen_content_padding">6dp</dimen>
+    <dimen name="search_input_text_padding">15dp</dimen>
 </resources>
