@@ -1,4 +1,4 @@
-package com.ondinnonk.testisolated.utils
+package com.ondinnonk.testisolated.list
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,7 +13,7 @@ import java.net.URL
 import java.net.UnknownServiceException
 
 
-class NetLoader {
+class NetRepository {
 
     fun loadImage(url: String): Bitmap? {
         return try {

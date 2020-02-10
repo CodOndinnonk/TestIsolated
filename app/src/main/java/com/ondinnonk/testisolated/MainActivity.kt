@@ -39,6 +39,20 @@ class MainActivity : AppCompatActivity() {
             it.addDrawerListener(toggle)
             toggle.syncState()
         }
+
+        main_navigation_view.setNavigationItemSelectedListener {
+            openFragment(FilmsListFragment())
+            return@setNavigationItemSelectedListener true
+        }
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (main_container.childCount == 0){
+            finish()
+        }
+
     }
 
 }

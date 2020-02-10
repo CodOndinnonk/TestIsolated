@@ -4,14 +4,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ondinnonk.testisolated.Config
-import com.ondinnonk.testisolated.utils.NetLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FilmsListViewModel : ViewModel() {
 
-    var filmsList: MutableLiveData<List<Film>> = MutableLiveData()
+    private var _filmsList: MutableLiveData<List<Film>> = MutableLiveData()
+    val filmsList = _filmsList
+    private val repository: NetRepository by lazy { NetRepository() }
 
 
     val filmsListAdapter: MutableLiveData<FilmsListAdapter> =
@@ -24,8 +25,8 @@ class FilmsListViewModel : ViewModel() {
     fun fetchFilms() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                NetLoader().getJSON(Config.SOURCE_URL)?.let {
-                    filmsList.postValue(Film.create(it))
+                repository.getJSON(Config.SOURCE_URL)?.let {
+                    _filmsList.postValue(Film.create(it))
                 }
             }
         }

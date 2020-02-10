@@ -7,7 +7,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.ondinnonk.testisolated.R
 import com.ondinnonk.testisolated.utils.DateUtil
-import com.ondinnonk.testisolated.utils.NetLoader
+import com.ondinnonk.testisolated.utils.ImageCache
 import kotlinx.android.synthetic.main.item_film_list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -50,13 +50,15 @@ class FilmsListAdapter(val onItemSelect: (f: Film) -> Unit) :
         }
 
         private suspend fun setImage(view: ImageView, url: String) {
-            val img = withContext(Dispatchers.IO) {
-                NetLoader().loadImage(url)
-            }
-            withContext(Dispatchers.Main){
-                img?.let {
-                    view.setImageBitmap(it)
+            if (ImageCache.has(url).not()) {
+                val img = withContext(Dispatchers.IO) {
+                    NetRepository().loadImage(url)
                 }
+                img?.let { ImageCache.put(url, it) }
+            }
+
+            withContext(Dispatchers.Main) {
+                view.setImageBitmap(ImageCache.getCached(url))
             }
         }
 
