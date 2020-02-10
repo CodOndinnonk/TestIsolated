@@ -1,10 +1,12 @@
 package com.ondinnonk.testisolated.utils
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
-import android.view.View
 import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -13,7 +15,19 @@ import java.net.UnknownServiceException
 
 class NetLoader {
 
-    fun loadImage(url: String, host: View) {}
+    fun loadImage(url: String): Bitmap? {
+        return try {
+            val connection = URL(url)
+                .openConnection() as HttpURLConnection
+            connection.doInput = true
+            connection.connect()
+            val input: InputStream = connection.inputStream
+            BitmapFactory.decodeStream(input)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
 
     fun getJSON(url: String): JSONArray? {
         val obj = URL(url)

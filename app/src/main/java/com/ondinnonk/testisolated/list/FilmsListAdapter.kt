@@ -3,11 +3,16 @@ package com.ondinnonk.testisolated.list
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.ondinnonk.testisolated.R
 import com.ondinnonk.testisolated.utils.DateUtil
 import com.ondinnonk.testisolated.utils.NetLoader
 import kotlinx.android.synthetic.main.item_film_list.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FilmsListAdapter(val onItemSelect: (f: Film) -> Unit) :
     RecyclerView.Adapter<FilmsListAdapter.FilmListItemViewHolder>() {
@@ -34,13 +39,29 @@ class FilmsListAdapter(val onItemSelect: (f: Film) -> Unit) :
 
         fun bind(film: Film) {
             with(itemView) {
-                NetLoader().loadImage(film.imageURL, item_film_list_image)
+                GlobalScope.launch {
+                    setImage(item_film_list_image, film.imageURL)
+                }
                 item_film_list_name.text = film.name
-                item_film_list_date.text = DateUtil.getDate(film.date, DateUtil.dd_MMMM_yyyy_HH_MM)
+                item_film_list_date.text =
+                    DateUtil.getDate(film.date, DateUtil.dd_MMMM_yyyy_HH_MM)
                 setOnClickListener { onItemSelect(film) }
             }
         }
+
+        private suspend fun setImage(view: ImageView, url: String) {
+            val img = withContext(Dispatchers.IO) {
+                NetLoader().loadImage(url)
+            }
+            withContext(Dispatchers.Main){
+                img?.let {
+                    view.setImageBitmap(it)
+                }
+            }
+        }
+
     }
 
 
 }
+
