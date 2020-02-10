@@ -3,6 +3,10 @@ package com.ondinnonk.testisolated.list
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.ondinnonk.testisolated.Config
+import com.ondinnonk.testisolated.Config.UPDATE_TIME_INTERVAL_SEC
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.IOException
@@ -11,9 +15,13 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.UnknownServiceException
+import java.util.*
 
 
 class NetRepository {
+
+    private var serverJson: JSONArray? = null
+    private var lastServerJsonUpdate: Long = 0
 
     fun loadImage(url: String): Bitmap? {
         return try {
@@ -27,6 +35,23 @@ class NetRepository {
             e.printStackTrace()
             null
         }
+    }
+
+    /**
+     * @param forceServerRequest false -> request server with interval in [Config.UPDATE_TIME_INTERVAL_SEC] seconds
+     * [<p>]                     true -> take data from server
+     */
+    suspend fun getFilmsList(forceServerRequest: Boolean = false): List<Film> {
+        serverJson?.let {
+            if (forceServerRequest.not() &&
+                (Date().time - lastServerJsonUpdate) < UPDATE_TIME_INTERVAL_SEC * 1000
+            ) {
+                return Film.create(it)
+            }
+        }
+        withContext(Dispatchers.IO) {
+            getJSON(Config.SOURCE_URL)
+        }?.let { return Film.create(it) } ?: return emptyList()
     }
 
     fun getJSON(url: String): JSONArray? {
@@ -46,7 +71,9 @@ class NetRepository {
             }
             bufferedReader.close()
 
-            return JSONArray(response.toString())
+            serverJson = JSONArray(response.toString())
+            lastServerJsonUpdate = Date().time
+            return serverJson
         } catch (ioe: IOException) {
             Log.e(this::class.java.name, "Failed to fetch data.", ioe)
             return null
