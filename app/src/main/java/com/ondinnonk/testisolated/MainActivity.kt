@@ -21,7 +21,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        openFragment(FilmsListFragment.newInstance())
+        if (supportFragmentManager.backStackEntryCount == 0){
+            openFragment(FilmsListFragment.newInstance())
+        }
     }
 
     private fun setupNavigationMenu() {
