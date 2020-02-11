@@ -1,17 +1,20 @@
 package com.ondinnonk.testisolated.list
 
+import android.os.Parcelable
 import android.util.Log
+import kotlinx.android.parcel.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+@Parcelize
 data class Film(
     val id: Long,
     var name: String,
     val imageURL: String,
     var description: String,
     val date: Long
-) {
+) : Parcelable {
 
     companion object {
         const val KEY_ID_JSON = "itemId"
@@ -19,7 +22,6 @@ data class Film(
         const val KEY_IMG_URL_JSON = "image"
         const val KEY_DESCRIPTION_JSON = "description"
         const val KEY_DATE_JSON = "time"
-
 
         fun create(json: JSONArray): List<Film> {
             val out = arrayListOf<Film>()
@@ -69,7 +71,29 @@ data class Film(
             }
             return null
         }
+    }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
+        other as Film
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (imageURL != other.imageURL) return false
+        if (description != other.description) return false
+        if (date != other.date) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + imageURL.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + date.hashCode()
+        return result
     }
 }

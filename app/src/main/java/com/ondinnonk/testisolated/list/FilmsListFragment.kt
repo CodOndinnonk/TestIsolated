@@ -10,20 +10,26 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ondinnonk.testisolated.R
+import com.ondinnonk.testisolated.details.DetailsPagerFragment
+import com.ondinnonk.testisolated.extensions.openFragment
 import kotlinx.android.synthetic.main.fragment_films_list.*
 
 class FilmsListFragment : Fragment() {
+
     private lateinit var viewModel: FilmsListViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FilmsListViewModel::class.java)
+    companion object {
+        fun newInstance(): FilmsListFragment {
+            return FilmsListFragment()
+        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = ViewModelProvider(this).get(FilmsListViewModel::class.java)
+
         return inflater.inflate(R.layout.fragment_films_list, container, false)
     }
 
@@ -55,10 +61,17 @@ class FilmsListFragment : Fragment() {
             films_list_recycler.adapter = it
             films_list_recycler.invalidate()
         })
-        adapterFilmsList.observe(viewLifecycleOwner, Observer { filmsListAdapter.value?.setFilms(it) })
+        adapterFilmsList.observe(
+            viewLifecycleOwner,
+            Observer { filmsListAdapter.value?.setFilms(it) })
         actionOnApplyFilter.observe(
             viewLifecycleOwner,
             Observer { films_list_search_cancel.visibility = View.VISIBLE })
+        openFilmDetails.observe(
+            viewLifecycleOwner,
+            Observer {
+                activity?.openFragment(DetailsPagerFragment.newInstance(it))
+            })
     }
 
     private fun cancelFilters() {

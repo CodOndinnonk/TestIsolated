@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        openFragment(FilmsListFragment())
+        openFragment(FilmsListFragment.newInstance())
     }
 
     private fun setupNavigationMenu() {
@@ -39,17 +39,11 @@ class MainActivity : AppCompatActivity() {
             it.addDrawerListener(toggle)
             toggle.syncState()
         }
-
-        main_navigation_view.setNavigationItemSelectedListener {
-            openFragment(FilmsListFragment())
-            return@setNavigationItemSelectedListener true
-        }
-
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        if (main_container.childCount == 0){
+        if (main_container.childCount == 0) {
             finish()
         }
 

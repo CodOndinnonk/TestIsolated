@@ -6,4 +6,5 @@
     <string name="film_list_search_hint"> Enter to search title</string>
     <string name="empty_search_warning_text">Can\'t search empty title</string>
     <string name="cancel_filters">Cancel filters</string>
+    <string name="film_details_error_text">Can\'t get film details, try later</string>
 </resources>

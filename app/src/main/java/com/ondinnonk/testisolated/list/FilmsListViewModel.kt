@@ -3,19 +3,19 @@ package com.ondinnonk.testisolated.list
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import com.ondinnonk.testisolated.NetRepository
+import com.ondinnonk.testisolated.extensions.SingleLiveEvent
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FilmsListViewModel : ViewModel() {
 
-    private val repository: NetRepository by lazy { NetRepository() }
-
+    private val repository = NetRepository.instance
     private var _adapterFilmsList: MutableLiveData<List<Film>> = MutableLiveData()
+    private var _openFilmDetails = SingleLiveEvent<Film>()
+
     val adapterFilmsList = _adapterFilmsList
     val actionOnApplyFilter = MutableLiveData<Unit>()
-
-
+    val openFilmDetails = _openFilmDetails
     val filmsListAdapter: MutableLiveData<FilmsListAdapter> =
         MutableLiveData(FilmsListAdapter(this::onFilmSelect))
 
@@ -25,7 +25,7 @@ class FilmsListViewModel : ViewModel() {
 
     fun fetchFilms() {
         viewModelScope.launch {
-                _adapterFilmsList.postValue(repository.getFilmsList())
+            _adapterFilmsList.postValue(repository.getFilmsList())
         }
     }
 
@@ -43,8 +43,6 @@ class FilmsListViewModel : ViewModel() {
     }
 
     private fun onFilmSelect(film: Film) {
-
+        _openFilmDetails.postValue(film)
     }
-
-
 }
